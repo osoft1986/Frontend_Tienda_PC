@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './UserPurchases.css';
-import Footer from '../Footer/Footer';
-import Navbar from '../NavBar/NavBar';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faCalendarAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./UserPurchases.css";
+import Footer from "../Footer/Footer";
+import Navbar from "../NavBar/NavBar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSort,
+  faCalendarAlt,
+  faDollarSign,
+} from "@fortawesome/free-solid-svg-icons";
+import { Modal, Button } from "react-bootstrap";
 
 const UserPurchases = () => {
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [showModal, setShowModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState("");
   const [userInfo, setUserInfo] = useState(null); // Estado para la información del usuario
 
   // Pagination state
@@ -25,29 +29,37 @@ const UserPurchases = () => {
   useEffect(() => {
     const fetchPurchases = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('No se encontró el token en localStorage.');
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No se encontró el token en localStorage.");
 
         // Obtener las compras
-        const response = await axios.get('https://backend-tienda-mac-production.up.railway.app/auth/purchases', {
-          headers: { 'x-auth-token': token },
-        });
+        const response = await axios.get(
+          "https://back-endtiendamacandtiendam-production.up.railway.app/auth/purchases",
+          {
+            headers: { "x-auth-token": token },
+          }
+        );
 
-        const purchasesWithImages = response.data.map(purchase => {
+        const purchasesWithImages = response.data.map((purchase) => {
           const product = purchase.Product;
-          const imagePath = product && product.Image ? product.Image.path.split('\\').pop() : null;
+          const imagePath =
+            product && product.Image
+              ? product.Image.path.split("\\").pop()
+              : null;
           return {
             ...purchase,
             date: new Date(purchase.createdAt),
-            productName: product ? product.name : 'No hay producto relacionado',
-            imageUrl: imagePath ? `https://backend-tienda-mac-production.up.railway.app/images/${imagePath}` : null,
+            productName: product ? product.name : "No hay producto relacionado",
+            imageUrl: imagePath
+              ? `https://back-endtiendamacandtiendam-production.up.railway.app/images/${imagePath}`
+              : null,
           };
         });
 
         setPurchases(purchasesWithImages);
       } catch (err) {
-        console.error('Error fetching purchases:', err);
-        setError('Error al obtener las compras.');
+        console.error("Error fetching purchases:", err);
+        setError("Error al obtener las compras.");
       } finally {
         setLoading(false);
       }
@@ -55,15 +67,18 @@ const UserPurchases = () => {
 
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('https://backend-tienda-mac-production.up.railway.app/auth/me', {
-          headers: { 'x-auth-token': token },
-        });
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://back-endtiendamacandtiendam-production.up.railway.app/auth/me",
+          {
+            headers: { "x-auth-token": token },
+          }
+        );
 
         setUserInfo(response.data); // Almacena la información del usuario
       } catch (err) {
-        console.error('Error fetching user data:', err);
-        setError('Error al obtener los datos del usuario.');
+        console.error("Error fetching user data:", err);
+        setError("Error al obtener los datos del usuario.");
       }
     };
 
@@ -72,12 +87,15 @@ const UserPurchases = () => {
   }, []);
 
   const sortPurchases = (purchasesToSort) => {
-    return purchasesToSort.sort((a, b) => (sortOrder === 'desc' ? b.date - a.date : a.date - b.date));
+    return purchasesToSort.sort((a, b) =>
+      sortOrder === "desc" ? b.date - a.date : a.date - b.date
+    );
   };
 
   const filterPurchases = (purchasesToFilter) => {
-    return purchasesToFilter.filter(purchase => {
-      const statusMatch = filterStatus === 'all' || purchase.status === filterStatus;
+    return purchasesToFilter.filter((purchase) => {
+      const statusMatch =
+        filterStatus === "all" || purchase.status === filterStatus;
       const dateMatch =
         (!dateRange.start || purchase.date >= new Date(dateRange.start)) &&
         (!dateRange.end || purchase.date <= new Date(dateRange.end));
@@ -86,7 +104,7 @@ const UserPurchases = () => {
   };
 
   const handleSort = () => {
-    setSortOrder(prevOrder => (prevOrder === 'desc' ? 'asc' : 'desc'));
+    setSortOrder((prevOrder) => (prevOrder === "desc" ? "asc" : "desc"));
   };
 
   const handleFilterChange = (e) => {
@@ -104,35 +122,48 @@ const UserPurchases = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
-    setSelectedImage('');
+    setSelectedImage("");
   };
 
   const formatPrice = (amount) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   if (loading) return <p className="loading">Cargando...</p>;
   if (error) return <p className="error">{error}</p>;
-  if (purchases.length === 0) return <p className="no-purchases">No se encontraron compras.</p>;
+  if (purchases.length === 0)
+    return <p className="no-purchases">No se encontraron compras.</p>;
 
   const filteredAndSortedPurchases = sortPurchases(filterPurchases(purchases));
 
   // Pagination logic
   const indexOfLastPurchase = currentPage * itemsPerPage;
   const indexOfFirstPurchase = indexOfLastPurchase - itemsPerPage;
-  const currentPurchases = filteredAndSortedPurchases.slice(indexOfFirstPurchase, indexOfLastPurchase);
-  const totalPages = Math.ceil(filteredAndSortedPurchases.length / itemsPerPage);
+  const currentPurchases = filteredAndSortedPurchases.slice(
+    indexOfFirstPurchase,
+    indexOfLastPurchase
+  );
+  const totalPages = Math.ceil(
+    filteredAndSortedPurchases.length / itemsPerPage
+  );
 
   return (
     <>
       <Navbar />
       <div className="container">
-        <h2 className="main-title" style={{ color: 'black' }}>Mis Compras</h2>
+        <h2 className="main-title" style={{ color: "black" }}>
+          Mis Compras
+        </h2>
         <div className="filters">
           <button onClick={handleSort} className="sort-button">
-            <FontAwesomeIcon icon={faSort} /> Ordenar por fecha ({sortOrder === 'desc' ? 'Más reciente' : 'Más antiguo'})
+            <FontAwesomeIcon icon={faSort} /> Ordenar por fecha (
+            {sortOrder === "desc" ? "Más reciente" : "Más antiguo"})
           </button>
-          <select onChange={handleFilterChange} value={filterStatus} className="filter-select">
+          <select
+            onChange={handleFilterChange}
+            value={filterStatus}
+            className="filter-select"
+          >
             <option value="all">Todos los estados</option>
             <option value="charge_pending">Pendiente</option>
             <option value="completed">Completado</option>
@@ -165,24 +196,48 @@ const UserPurchases = () => {
                 <div className="purchase-header">
                   <FontAwesomeIcon icon={faCalendarAlt} className="icon" />
                 </div>
-                <p className="purchase-item"><strong>Producto:</strong> {purchase.productName}</p>
-                <p className="purchase-item"><strong>Descripción:</strong> {purchase.description}</p>
+                <p className="purchase-item">
+                  <strong>Producto:</strong> {purchase.productName}
+                </p>
+                <p className="purchase-item">
+                  <strong>Descripción:</strong> {purchase.description}
+                </p>
                 <p className="purchase-item">
                   <FontAwesomeIcon icon={faDollarSign} className="icon" />
-                  <strong>Monto:</strong> {formatPrice(purchase.amount)} {purchase.currency}
+                  <strong>Monto:</strong> {formatPrice(purchase.amount)}{" "}
+                  {purchase.currency}
                 </p>
-                <p className="purchase-item"><strong>Método de Pago:</strong> {purchase.payment_method}</p>
-                <p className="purchase-item"><strong>Referencia:</strong> {purchase.reference}</p>
-                <p className="purchase-item"><strong>ID de Cargo:</strong> {purchase.charge_id}</p>
+                <p className="purchase-item">
+                  <strong>Método de Pago:</strong> {purchase.payment_method}
+                </p>
+                <p className="purchase-item">
+                  <strong>Referencia:</strong> {purchase.reference}
+                </p>
+                <p className="purchase-item">
+                  <strong>ID de Cargo:</strong> {purchase.charge_id}
+                </p>
 
                 {/* Mostrar la información del usuario dentro de la tarjeta de compra */}
                 {userInfo && (
                   <>
-                    <p className="purchase-item"><strong>Nombre:</strong> {userInfo.firstName} {userInfo.lastName}</p>
-                    <p className="purchase-item"><strong>Número de Documento:</strong> {userInfo.documentNumber}</p>
-                    <p className="purchase-item"><strong>Número de Teléfono:</strong> {userInfo.phoneNumber}</p>
-                    <p className="purchase-item"><strong>Dirección:</strong> {userInfo.address}</p>
-                    <p className="purchase-item"><strong>Ciudad:</strong> {userInfo.city}</p>
+                    <p className="purchase-item">
+                      <strong>Nombre:</strong> {userInfo.firstName}{" "}
+                      {userInfo.lastName}
+                    </p>
+                    <p className="purchase-item">
+                      <strong>Número de Documento:</strong>{" "}
+                      {userInfo.documentNumber}
+                    </p>
+                    <p className="purchase-item">
+                      <strong>Número de Teléfono:</strong>{" "}
+                      {userInfo.phoneNumber}
+                    </p>
+                    <p className="purchase-item">
+                      <strong>Dirección:</strong> {userInfo.address}
+                    </p>
+                    <p className="purchase-item">
+                      <strong>Ciudad:</strong> {userInfo.city}
+                    </p>
                   </>
                 )}
               </div>
@@ -204,16 +259,40 @@ const UserPurchases = () => {
 
         <nav aria-label="Page navigation">
           <ul className="pagination">
-            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Anterior</button>
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Anterior
+              </button>
             </li>
             {[...Array(totalPages).keys()].map((page) => (
-              <li className={`page-item ${currentPage === page + 1 ? 'active' : ''}`} key={page}>
-                <button className="page-link" onClick={() => setCurrentPage(page + 1)}>{page + 1}</button>
+              <li
+                className={`page-item ${
+                  currentPage === page + 1 ? "active" : ""
+                }`}
+                key={page}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(page + 1)}
+                >
+                  {page + 1}
+                </button>
               </li>
             ))}
-            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Siguiente</button>
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Siguiente
+              </button>
             </li>
           </ul>
         </nav>

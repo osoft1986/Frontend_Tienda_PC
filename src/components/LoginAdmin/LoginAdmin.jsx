@@ -9,13 +9,16 @@ function LoginAdmin({ onLogin }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch("https://backend-tienda-mac-production.up.railway.app/validateUserAdmin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    fetch(
+      "https://back-endtiendamacandtiendam-production.up.railway.app/validateUserAdmin",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.message === "User admin found") {
@@ -40,7 +43,10 @@ function LoginAdmin({ onLogin }) {
               <h2 className="card-title-admin text-center mb-4">Login Admin</h2>
               <form className="login-form" onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label login-form-label">
+                  <label
+                    htmlFor="email"
+                    className="form-label login-form-label"
+                  >
                     Ingresa usuario:
                   </label>
                   <input
@@ -54,7 +60,10 @@ function LoginAdmin({ onLogin }) {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label login-form-label">
+                  <label
+                    htmlFor="password"
+                    className="form-label login-form-label"
+                  >
                     Ingresa contraseña:
                   </label>
                   <input

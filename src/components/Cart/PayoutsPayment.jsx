@@ -1,55 +1,64 @@
-import React, { useState } from 'react';
-import { Form, Button, Col, Row, Alert } from 'react-bootstrap';
-import axios from 'axios';
-import styles from './PayoutsPayment.module.css';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkedAlt, FaIdCard } from 'react-icons/fa';
-import { useCart } from '../../context/CartContext';
+import React, { useState } from "react";
+import { Form, Button, Col, Row, Alert } from "react-bootstrap";
+import axios from "axios";
+import styles from "./PayoutsPayment.module.css";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkedAlt,
+  FaIdCard,
+} from "react-icons/fa";
+import { useCart } from "../../context/CartContext";
 
 const PayoutsPayment = ({ totalAmount, userId }) => {
   const { clearCart } = useCart();
   const [customerData, setCustomerData] = useState({
-    name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
-    department: '',
-    city: '',
-    additional: '',
-    document_number: ''
+    name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    department: "",
+    city: "",
+    additional: "",
+    document_number: "",
   });
 
-  const [receiptUrl, setReceiptUrl] = useState('');
-  const [error, setError] = useState('');
+  const [receiptUrl, setReceiptUrl] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCustomerData(prevData => ({
+    setCustomerData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const paymentData = {
         customer: customerData,
         charge: {
           amount: totalAmount,
-          description: 'COMPRA EN Tienda PC',
+          description: "COMPRA EN Tienda PC",
           order_id: `ORDER-${Date.now()}`,
           iva: 0,
         },
         userId: parseInt(userId, 10), // Aseguramos que userId sea un número
-        productId: 1 // Asumimos un ID de producto fijo, ajusta según sea necesario
+        productId: 1, // Asumimos un ID de producto fijo, ajusta según sea necesario
       };
 
-      const response = await axios.post('https://backend-tienda-mac-production.up.railway.app/api/openpay/store-payment', paymentData);
+      const response = await axios.post(
+        "https://back-endtiendamacandtiendam-production.up.railway.app/api/openpay/store-payment",
+        paymentData
+      );
 
-      console.log('Respuesta del servidor:', response.data);
+      console.log("Respuesta del servidor:", response.data);
 
       if (response.data && response.data.receipt_url) {
         setReceiptUrl(response.data.receipt_url);
@@ -58,11 +67,14 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
           window.location.href = response.data.receipt_url;
         }, 3000);
       } else {
-        setError('No se recibió una URL de recibo válida');
+        setError("No se recibió una URL de recibo válida");
       }
     } catch (error) {
-      console.error('Error al procesar el pago:', error);
-      setError(error.response?.data?.error || 'Error al procesar el pago. Por favor, intente de nuevo.');
+      console.error("Error al procesar el pago:", error);
+      setError(
+        error.response?.data?.error ||
+          "Error al procesar el pago. Por favor, intente de nuevo."
+      );
     } finally {
       setLoading(false);
     }
@@ -91,7 +103,10 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group controlId="formBasicLastName" className={styles.formGroup}>
+            <Form.Group
+              controlId="formBasicLastName"
+              className={styles.formGroup}
+            >
               <Form.Label className={styles.formLabel}>
                 <FaUser className={styles.icon} /> Apellido
               </Form.Label>
@@ -143,7 +158,10 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group controlId="formBasicDepartment" className={styles.formGroup}>
+            <Form.Group
+              controlId="formBasicDepartment"
+              className={styles.formGroup}
+            >
               <Form.Label className={styles.formLabel}>
                 <FaMapMarkedAlt className={styles.icon} /> Departamento
               </Form.Label>
@@ -175,7 +193,10 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
             </Form.Group>
           </Col>
         </Row>
-        <Form.Group controlId="formBasicAdditional" className={styles.formGroup}>
+        <Form.Group
+          controlId="formBasicAdditional"
+          className={styles.formGroup}
+        >
           <Form.Label className={styles.formLabel}>
             <FaMapMarkedAlt className={styles.icon} /> Dirección Adicional
           </Form.Label>
@@ -189,7 +210,10 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
             required
           />
         </Form.Group>
-        <Form.Group controlId="formBasicDocumentNumber" className={styles.formGroup}>
+        <Form.Group
+          controlId="formBasicDocumentNumber"
+          className={styles.formGroup}
+        >
           <Form.Label className={styles.formLabel}>
             <FaIdCard className={styles.icon} /> Número de Documento
           </Form.Label>
@@ -204,8 +228,13 @@ const PayoutsPayment = ({ totalAmount, userId }) => {
           />
         </Form.Group>
         <div className={styles.buttonContainer}>
-          <Button variant="primary" type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Procesando...' : 'Pagar con Payouts'}
+          <Button
+            variant="primary"
+            type="submit"
+            className={styles.submitButton}
+            disabled={loading}
+          >
+            {loading ? "Procesando..." : "Pagar con Payouts"}
           </Button>
         </div>
       </Form>
