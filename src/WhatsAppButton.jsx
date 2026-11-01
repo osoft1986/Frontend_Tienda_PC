@@ -5,10 +5,10 @@ import { FaWhatsapp } from "react-icons/fa"; // Importa el icono de WhatsApp des
 const WhatsAppButton = () => {
   const handleClick = () => {
     // Enlace de WhatsApp para la empresa
-    const whatsappLink =
-      "https://api.whatsapp.com/send?phone=573216830694&text=%C2%A1Hola%20Tienda%20Mac!%20Me%20interesa%20comprar%201%20Parlante%20Aura%20studio%203%20(15W%20RMS-%20100W%20RMS,%20Negro).%20%C2%BFPodr%C3%ADas%20darme%20informaci%C3%B3n%20adicional%3F%20Gracias!";
-    window.open(whatsappLink, "_blank");
-  };
+ const whatsappLink =
+  "https://api.whatsapp.com/send?phone=573233129207&text=Hola%20Tienda%20PC%F0%9F%91%8B.%20Me%20gustar%C3%ADa%20cotizar%20uno%20de%20los%20productos%20que%20vi%20en%20su%20P%C3%A1gina%20Web!";
+window.open(whatsappLink, "_blank");
+};
 
   return (
     <button
